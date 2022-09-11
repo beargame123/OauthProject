@@ -1,9 +1,6 @@
 package com.example.oauthtest.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -13,4 +10,10 @@ public class UserRequest {
     public String email;
     public String password;
     public String introduce;
+
+    @Builder
+    public UserRequest(String email, String introduce){
+        this.email = email;
+        this.introduce = introduce;
+    }
 }
