@@ -10,3 +10,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google: # /oauth2/authorization/google 이 주소를 동작하게 한다.
+            client-id: 866189198361-9mqdj1v31vn9hh4dnna1cpl8k6323lms.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
