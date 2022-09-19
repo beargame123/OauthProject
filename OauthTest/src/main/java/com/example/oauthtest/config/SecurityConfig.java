@@ -1,5 +1,6 @@
 package com.example.oauthtest.config;
 
+import com.example.oauthtest.auth.AuthDetailsService;
 import com.example.oauthtest.filter.JwtAuthenticationFilter;
 import com.example.oauthtest.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthDetailsService authDetailsService;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -47,20 +49,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 생성안한다는 명령어
-                .and()
+            .and()
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/signup").permitAll()
-                .antMatchers("/all/**").permitAll()
-                .antMatchers("/user/**").hasRole("USER")
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().hasRole("USER")
-                .and()
+                    .antMatchers("/login").permitAll()
+                    .antMatchers("/signup").permitAll()
+                    .antMatchers("/all/**").permitAll()
+                    .antMatchers("/user/**").hasRole("USER")
+                    .antMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().hasRole("USER")
+            .and()
                 .logout()
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                    .logoutSuccessUrl("/")
+            .and()
+                .oauth2Login()
+                    .userInfoEndpoint() // 로그인 이후 사용자 정보를 가져올때 설정
+                    .userService(authDetailsService);
+                // authDetailsService를 통해 사용자 정보를 가져온다
+                // authDetailsService는 UserService의 구현체이다
+
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음.
     }
 }
