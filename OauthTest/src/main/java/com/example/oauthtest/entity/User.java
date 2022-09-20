@@ -13,10 +13,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Table(name = "USERS")
+@Builder
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "picture")
+    private String picture;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "email")
     private String email;
@@ -28,6 +35,7 @@ public class User {
     private String introduce;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @Builder
@@ -36,5 +44,16 @@ public class User {
         this.password = password;
         this.introduce = introduce;
         this.role = role;
+    }
+
+    public User update(String name, String picture) {
+        this.name = name;
+        this.picture = picture;
+
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
     }
 }
