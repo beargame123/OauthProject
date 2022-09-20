@@ -36,7 +36,7 @@ public class LoginController {
                 .email(request.email)
                 .introduce(request.introduce)
                 .password(passwordEncoder.encode(request.password))
-                .role(Role.ROLE_USER)
+                .role(Role.USER)
                 .build());
     }
 
