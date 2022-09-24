@@ -48,26 +48,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .cors().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 생성안한다는 명령어
-            .and()
+                //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 생성안한다는 명령어
+           // .and()
+
+                // user
                 .authorizeRequests()
                     .antMatchers("/login").permitAll()
                     .antMatchers("/signup").permitAll()
                     .antMatchers("/all/**").permitAll()
                     .antMatchers("/user/**").hasRole("USER")
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().hasRole("USER")
-            .and()
-                .logout()
-                    .logoutSuccessUrl("/")
-            .and()
-                .oauth2Login()
-                    .userInfoEndpoint() // 로그인 이후 사용자 정보를 가져올때 설정
-                    .userService(authDetailsService);
-                // authDetailsService를 통해 사용자 정보를 가져온다
-                // authDetailsService는 UserService의 구현체이다
+                    .anyRequest().authenticated()
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                // login
+            .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음.
     }
 }
